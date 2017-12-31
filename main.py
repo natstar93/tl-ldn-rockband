@@ -7,6 +7,7 @@ import http.client
 import http.server
 import webbrowser
 import re
+import sys
 
 class SpotifyAPI:
 	def __init__(self, auth):
@@ -88,10 +89,10 @@ def getRockBandTracks(url):
 def main():
     spotify = SpotifyAPI.webAuthorize(client_id='fcc8cc664f5f448e9c90b265a77118a5')
 
-    tlPlaylistUrl = 'https://api.spotify.com/v1/users/robcthegeek/playlists/2JwE2prZ0fdX82d3alpGhQ/tracks?fields=items(track(id,name,artists(name)),added_by(id)),next'
+    tlPlaylistUrl = sys.argv[1] if len(sys.argv) > 1 else 'https://api.spotify.com/v1/users/robcthegeek/playlists/2JwE2prZ0fdX82d3alpGhQ'
     rbPlaylistUrl = 'https://rbdb.io/v3/songs?fields=spotifyId'
 
-    tlTracks = spotify.getTracks(tlPlaylistUrl)
+    tlTracks = spotify.getTracks(tlPlaylistUrl + '/tracks?fields=items(track(id,name,artists(name)),added_by(id)),next')
     rbTracks = getRockBandTracks(rbPlaylistUrl)['collection']
 
     rbIds = [track['spotifyId'] for track in rbTracks]
