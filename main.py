@@ -26,7 +26,7 @@ class SpotifyAPI:
 				url = decodedData['next']
 			return tracks
 		except(URLError, e):
-			print('Fail', e)
+			print('Failed to get tracks', e)
 
 	@staticmethod
 	def webAuthorize(client_id):
@@ -78,16 +78,23 @@ class SpotifyAPI:
 		def __init__(self, access_token):
 			self.access_token = access_token
 
+def getRockBandTracks(url):
+    response = urlopen(Request(url))
+    data = response.read()
+    encoding = response.info().get_content_charset('utf8')
+    decodedData = loads(data.decode(encoding))
+    return decodedData
+
 def main():
     spotify = SpotifyAPI.webAuthorize(client_id='fcc8cc664f5f448e9c90b265a77118a5')
 
     tlPlaylistUrl = 'https://api.spotify.com/v1/users/robcthegeek/playlists/2JwE2prZ0fdX82d3alpGhQ/tracks?fields=items(track(id,name,artists(name)),added_by(id)),next'
-    rbPlaylistUrl = 'https://api.spotify.com/v1/users/rockbandofficial/playlists/1LOZfgjinUc6K2mz8wjPz3/tracks?fields=items(track(id)),next'
+    rbPlaylistUrl = 'https://rbdb.io/v3/songs?fields=spotifyId'
 
     tlTracks = spotify.getTracks(tlPlaylistUrl)
-    rbTracks = spotify.getTracks(rbPlaylistUrl)
+    rbTracks = getRockBandTracks(rbPlaylistUrl)['collection']
 
-    rbIds = [track['track']['id'] for track in rbTracks]
+    rbIds = [track['spotifyId'] for track in rbTracks]
 
     matches = []
 
