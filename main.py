@@ -85,12 +85,15 @@ def getData(url, headers={}):
     except Exception:
         print('\nFailed to get data from', url)
 
+def createSpotifyUrl(url):
+    return url.replace('https://open.spotify.com/user', 'https://api.spotify.com/v1/users').replace('playlist', 'playlists')
+
 def main():
     spotify = SpotifyAPI.webAuthorize(client_id='fcc8cc664f5f448e9c90b265a77118a5')
 
     tlPlaylistUrl = 'https://api.spotify.com/v1/users/robcthegeek/playlists/2JwE2prZ0fdX82d3alpGhQ'
 
-    spotifyPlaylistUrl = sys.argv[1] if len(sys.argv) > 1 else tlPlaylistUrl
+    spotifyPlaylistUrl = createSpotifyUrl(sys.argv[1]) if len(sys.argv) > 1 else tlPlaylistUrl
     rockbandPlaylistUrl = 'https://rbdb.io/v3/songs?fields=spotifyId'
 
     tlTracks = spotify.getTracks(spotifyPlaylistUrl + '/tracks?fields=items(track(id,name,artists(name)),added_by(id)),next')
