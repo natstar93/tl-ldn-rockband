@@ -15,19 +15,15 @@ class SpotifyAPI:
 
 	def getTracks(self, url):
 		print('\n>> Getting tracks from {0}'.format(url))
+		tracks = []
 		try:
-			tracks = []
 			while url:
-				request = Request(url, headers={'Authorization': 'Bearer ' + self._auth})
-				response = urlopen(request)
-				data = response.read()
-				encoding = response.info().get_content_charset('utf8')
-				decodedData = loads(data.decode(encoding))
+				decodedData = getData(url, {'Authorization': 'Bearer ' + self._auth})
 				tracks.extend(decodedData['items'])
 				url = decodedData['next']
-			return tracks
-		except(URLError, e):
-			print('Failed to get tracks', e)
+		except Exception:
+			print('\nFailed to get Spotify tracks')
+		return tracks
 
 	@staticmethod
 	def webAuthorize(client_id):
@@ -79,23 +75,32 @@ class SpotifyAPI:
 		def __init__(self, access_token):
 			self.access_token = access_token
 
-def getRockBandTracks(url):
-    response = urlopen(Request(url))
-    data = response.read()
-    encoding = response.info().get_content_charset('utf8')
-    decodedData = loads(data.decode(encoding))
-    return decodedData
+def getData(url, headers={}):
+    try:
+        request = Request(url, headers=headers)
+        response = urlopen(request)
+        data = response.read()
+        encoding = response.info().get_content_charset('utf8')
+        return loads(data.decode(encoding))
+    except Exception:
+        print('\nFailed to get data from', url)
 
 def main():
     spotify = SpotifyAPI.webAuthorize(client_id='fcc8cc664f5f448e9c90b265a77118a5')
 
-    tlPlaylistUrl = sys.argv[1] if len(sys.argv) > 1 else 'https://api.spotify.com/v1/users/robcthegeek/playlists/2JwE2prZ0fdX82d3alpGhQ'
-    rbPlaylistUrl = 'https://rbdb.io/v3/songs?fields=spotifyId'
+    tlPlaylistUrl = 'https://api.spotify.com/v1/users/robcthegeek/playlists/2JwE2prZ0fdX82d3alpGhQ'
 
-    tlTracks = spotify.getTracks(tlPlaylistUrl + '/tracks?fields=items(track(id,name,artists(name)),added_by(id)),next')
-    rbTracks = getRockBandTracks(rbPlaylistUrl)['collection']
+    spotifyPlaylistUrl = sys.argv[1] if len(sys.argv) > 1 else tlPlaylistUrl
+    rockbandPlaylistUrl = 'https://rbdb.io/v3/songs?fields=spotifyId'
 
-    rbIds = [track['spotifyId'] for track in rbTracks]
+    tlTracks = spotify.getTracks(spotifyPlaylistUrl + '/tracks?fields=items(track(id,name,artists(name)),added_by(id)),next')
+
+    try:
+        rbTracks = getData(rockbandPlaylistUrl)['collection']
+        rbIds = [track['spotifyId'] for track in rbTracks]
+    except Exception:
+        print('\nFailed to get RockBand tracks')
+        rbIds = []
 
     matches = []
 
