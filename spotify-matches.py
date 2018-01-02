@@ -42,6 +42,14 @@ def getSpotifyTracks(url, token):
 		print('\nFailed to get Spotify tracks')
 	return tracks
 
+def getRockBandIds(url):
+	try:
+		rbTracks = getData(url)['collection']
+		return [track['spotifyId'] for track in rbTracks]
+	except Exception:
+		print('\nFailed to get Rock Band tracks')
+		return []
+
 def getSpotifyPlaylistName(url, token):
 	try:
 		data = getData(url + '?fields=name', {'Authorization': 'Bearer ' + token})
@@ -74,18 +82,12 @@ def main():
 	print('\n>> Getting tracks from {0}'.format(spotifyPlaylistName))
 
 	spotifyTracks = getSpotifyTracks(spotifyPlaylistUrl, spotifyToken)
-
-	try:
-		rbTracks = getData(rockbandPlaylistUrl)['collection']
-		rbIds = [track['spotifyId'] for track in rbTracks]
-	except Exception:
-		print('\nFailed to get Rock Band tracks')
-		rbIds = []
+	rockBandIds = getRockBandIds(rockbandPlaylistUrl)
 
 	numberOfMatches = 0
 
 	for track in spotifyTracks:
-		if any(rbId == track['track']['id'] for rbId in rbIds):
+		if any(rockBandId == track['track']['id'] for rockBandId in rockBandIds):
 			print('\n* {track[name]} by {track[artists][0][name]}. Added by {added_by[id]}.'.format(**track))
 			numberOfMatches += 1
 
