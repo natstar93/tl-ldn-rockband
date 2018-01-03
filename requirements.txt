@@ -1,0 +1,12 @@
+bcrypt==3.1.4
+certifi==2017.11.5
+cffi==1.11.2
+chardet==3.0.4
+cookies==2.2.1
+idna==2.6
+MyLibrary==1.0
+pycparser==2.18
+requests==2.18.4
+responses==0.8.1
+six==1.11.0
+urllib3==1.22

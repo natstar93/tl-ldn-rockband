@@ -14,20 +14,24 @@ Also check out the awesome [Rock Band Database](http://rbdb.online/) which lets 
 
 Make sure you have python3 installed. Open up your terminal/windows command thingy, clone this project and type:
 
-`python3 spotify-matches.py`
+```
+python3 setup.py install
+python3 spotify-matches.py
+```
 
 This will list the tracks on the TL-LDN-ROX playlist that are available on Rock Band.
 
+You can also pass the URL of a **public** Spotify playlist as an argument:
 
-`python3 spotify-matches.py https://open.spotify.com/user/{userId}/playlist/{playlistId}`
+```
+python3 spotify-matches.py https://open.spotify.com/user/{userId}/playlist/{playlistId}
+```
 
-Pass the URL of a **public** Spotify playlist as an argument.
+This will list the tracks on your playlist that are available on Rock Band.
 
 To find a Spotify playlist URL:
 * Right-click your playlist's name in the Spotify menu bar (or click on the three little dots on the playlist's home screen)
 * Hover over `Share` in the context menu and click `Copy Playlist URI`.
-
-Alternatively, it accepts the endpoint for the playlist on the Spotify API, but unless you've been messing around with the Spotify API you might not know what that is.
 
 Try not to type the URL incorrectly or input a private playlist because the error handling and user input validation are currently pretty crap (sorry, will fix all that soon).
 
