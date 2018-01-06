@@ -45,7 +45,12 @@ def getSpotifyTracks(url, token):
 def getRockBandIds(url):
 	try:
 		rbTracks = getData(url)['collection']
-		return [track['spotifyId'] for track in rbTracks]
+		rbIndexes = { 'availability': 6, 'spotifyId': 7 }
+
+		availableTracks = (
+			track[rbIndexes['spotifyId']] for track in rbTracks if track[rbIndexes['availability']] == 4
+		)
+		return list(availableTracks)
 	except Exception:
 		print('\nFailed to get Rock Band tracks')
 		return []
@@ -73,7 +78,7 @@ def getSpotifyAuthToken():
 def main():
 	tlPlaylistUrl = 'https://api.spotify.com/v1/users/robcthegeek/playlists/2JwE2prZ0fdX82d3alpGhQ'
 	spotifyPlaylistUrl = createSpotifyUrl(sys.argv[1]) if len(sys.argv) > 1 else tlPlaylistUrl
-	rockbandPlaylistUrl = 'https://rbdb.io/v3/songs?fields=spotifyId'
+	rockbandPlaylistUrl = 'https://rbdb.io/v3/songs?fields=availability,spotifyId&playsOn=rb4&compact=true' #'https://rbdb.io/v3/songs?fields=spotifyId,availability'
 
 	spotifyToken = getSpotifyAuthToken()
 
