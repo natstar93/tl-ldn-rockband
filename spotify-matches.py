@@ -55,6 +55,25 @@ class SpotifyAPI:
 		return tracks
 
 
+class RockBandAPI:
+
+	def __init__(self, url):
+		self._url = url
+
+	def getRockBandIds(self):
+		try:
+			rbTracks = getData(self._url)['collection']
+			rbIndexes = { 'availability': 6, 'spotifyId': 7 }
+
+			availableTracks = (
+				track[rbIndexes['spotifyId']] for track in rbTracks if track[rbIndexes['availability']] == 4
+			)
+			return list(availableTracks)
+		except Exception:
+			print('\nFailed to get Rock Band tracks')
+			return []
+
+
 def getData(url, headers={}):
 	try:
 		request = Request(url, headers=headers)
@@ -64,20 +83,6 @@ def getData(url, headers={}):
 		return loads(data.decode(encoding))
 	except Exception:
 		print('\nFailed to get data from', url)
-
-
-def getRockBandIds(url):
-	try:
-		rbTracks = getData(url)['collection']
-		rbIndexes = { 'availability': 6, 'spotifyId': 7 }
-
-		availableTracks = (
-			track[rbIndexes['spotifyId']] for track in rbTracks if track[rbIndexes['availability']] == 4
-		)
-		return list(availableTracks)
-	except Exception:
-		print('\nFailed to get Rock Band tracks')
-		return []
 
 
 def main():
@@ -98,7 +103,10 @@ def main():
 	print('\n>> Getting tracks from {0}'.format(spotifyPlaylistName))
 
 	spotifyTracks = spotify.getTracks()
-	rockBandIds = getRockBandIds(rockbandPlaylistUrl)
+
+	rockBand = RockBandAPI(rockbandPlaylistUrl)
+
+	rockBandIds = rockBand.getRockBandIds()
 
 	numberOfMatches = 0
 
