@@ -1,3 +1,4 @@
+from abc import ABCMeta, abstractmethod
 from urllib.request import urlopen
 from urllib.request import URLError
 from urllib.request import Request
@@ -10,7 +11,27 @@ import re
 import sys
 import requests
 
-class SpotifyAPI:
+
+class API(object):
+
+	__metaclass__ = ABCMeta
+
+	def __init__(self, url):
+		self._url = url
+
+	@abstractmethod
+	def getData(self, url, headers={}):
+		try:
+			request = Request(url, headers=headers)
+			response = urlopen(request)
+			data = response.read()
+			encoding = response.info().get_content_charset('utf8')
+			return loads(data.decode(encoding))
+		except Exception:
+			print('\nFailed to get data from', url)
+
+
+class SpotifyAPI(API):
 
 	def __init__(self, client_id, secret, url):
 		self._token = self.authorise((client_id, secret))
@@ -32,9 +53,12 @@ class SpotifyAPI:
 			url = url.replace(component, urlComponents[component])
 		return url
 
+	def getData(self, url, headers={}):
+		return super().getData(url, headers)
+
 	def getPlaylistName(self):
 		try:
-			data = getData(self._url + '?fields=name', {'Authorization': 'Bearer ' + self._token})
+			data = self.getData(self._url + '?fields=name', {'Authorization': 'Bearer ' + self._token})
 			return data['name']
 		except Exception:
 			return 'Spotify playlist'
@@ -45,7 +69,7 @@ class SpotifyAPI:
 		url = self._url
 		try:
 			while url:
-				decodedData = getData(url + params, {'Authorization': 'Bearer ' + self._token})
+				decodedData = self.getData(url + params, {'Authorization': 'Bearer ' + self._token})
 				tracks.extend(decodedData['items'])
 				url = decodedData['next']
 		except Exception:
@@ -53,14 +77,14 @@ class SpotifyAPI:
 		return tracks
 
 
-class RockBandAPI:
+class RockBandAPI(API):
 
-	def __init__(self, url):
-		self._url = url
+	def getData(self, url, headers={}):
+		return super().getData(url, headers)
 
 	def getRockBandIds(self):
 		try:
-			rbTracks = getData(self._url)['collection']
+			rbTracks = self.getData(self._url)['collection']
 			rbIndexes = { 'availability': 6, 'spotifyId': 7 }
 
 			availableTracks = (
@@ -86,16 +110,6 @@ class Matcher:
 				print('\n* {track[name]} by {track[artists][0][name]}. Added by {added_by[id]}.'.format(**track))
 				numberOfMatches += 1
 		return numberOfMatches
-
-def getData(url, headers={}):
-	try:
-		request = Request(url, headers=headers)
-		response = urlopen(request)
-		data = response.read()
-		encoding = response.info().get_content_charset('utf8')
-		return loads(data.decode(encoding))
-	except Exception:
-		print('\nFailed to get data from', url)
 
 
 def main():
