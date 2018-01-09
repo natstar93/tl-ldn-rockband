@@ -13,27 +13,24 @@ import requests
 class SpotifyAPI:
 
 	def __init__(self, client_id, secret, url):
-		self._credentials = (client_id, secret)
-		self._url = url
+		self._token = self.authorise((client_id, secret))
+		self._url = self.createUrl(url)
 
-	def authorise(self):
+	def authorise(self, credentials):
 		authUrl='https://accounts.spotify.com/api/token'
-		grant_type = 'client_credentials'
-		body_params = {'grant_type' : grant_type}
+		body_params = {'grant_type' : 'client_credentials'}
 
-		response = requests.post(authUrl, data=body_params, auth=self._credentials)
-		self._token = response.json()['access_token']
+		response = requests.post(authUrl, data=body_params, auth=credentials)
+		return response.json()['access_token']
 
-	def createUrl(self):
-		url = self._url
+	def createUrl(self, url):
 		urlComponents = {
 			'https://open.spotify.com/user': 'https://api.spotify.com/v1/users',
 			'playlist': 'playlists'
 		}
-
 		for component in urlComponents:
 			url = url.replace(component, urlComponents[component])
-		self._url = url
+		return url
 
 	def getPlaylistName(self):
 		try:
@@ -96,10 +93,6 @@ def main():
 	spotifyUrl = (sys.argv[1]) if len(sys.argv) > 1 else tlPlaylistUrl
 
 	spotify = SpotifyAPI(client_id, client_secret, spotifyUrl)
-
-	spotify.authorise()
-
-	spotify.createUrl()
 
 	spotifyPlaylistName = spotify.getPlaylistName()
 
