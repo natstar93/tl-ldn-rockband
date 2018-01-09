@@ -71,6 +71,21 @@ class RockBandAPI:
 			print('\nFailed to get Rock Band tracks')
 			return []
 
+class Matcher:
+
+	def __init__(self, ids, tracks):
+		self._ids = ids
+		self._tracks = tracks
+		self._matches = 0
+
+	def getMatches(self):
+		numberOfMatches = self._matches
+
+		for track in self._tracks:
+			if any(id == track['track']['id'] for id in self._ids):
+				print('\n* {track[name]} by {track[artists][0][name]}. Added by {added_by[id]}.'.format(**track))
+				numberOfMatches += 1
+		return numberOfMatches
 
 def getData(url, headers={}):
 	try:
@@ -104,17 +119,15 @@ def main():
 
 	rockBandIds = rockBand.getRockBandIds()
 
-	numberOfMatches = 0
+	matcher = Matcher(rockBandIds, spotifyTracks)
 
-	for track in spotifyTracks:
-		if any(rockBandId == track['track']['id'] for rockBandId in rockBandIds):
-			print('\n* {track[name]} by {track[artists][0][name]}. Added by {added_by[id]}.'.format(**track))
-			numberOfMatches += 1
+	numberOfMatches = matcher.getMatches()
 
 	if numberOfMatches == 0:
 		print('\n** No matches :(')
 	else:
-		print('\n*** {0} Rock Band tracks found in {1}. ***'.format(numberOfMatches, spotifyPlaylistName)) # pluralisation (1 matches?)
+		print('\n*** {0} Rock Band tracks found in {1}. ***'.format(numberOfMatches, spotifyPlaylistName)) # pluralisation (1 tracks?)
+
 
 if __name__ == '__main__':
 	main()
