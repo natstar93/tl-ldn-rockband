@@ -25,14 +25,15 @@ class SpotifyAPI:
 		self._token = response.json()['access_token']
 
 	def createUrl(self):
+		url = self._url
 		urlComponents = {
 			'https://open.spotify.com/user': 'https://api.spotify.com/v1/users',
 			'playlist': 'playlists'
 		}
 
 		for component in urlComponents:
-			url = self._url.replace(component, urlComponents[component])
-		return url
+			url = url.replace(component, urlComponents[component])
+		self._url = url
 
 	def getPlaylistName(self):
 		try:
@@ -97,6 +98,8 @@ def main():
 	spotify = SpotifyAPI(client_id, client_secret, spotifyUrl)
 
 	spotify.authorise()
+
+	spotify.createUrl()
 
 	spotifyPlaylistName = spotify.getPlaylistName()
 
