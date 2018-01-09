@@ -25,8 +25,8 @@ class SpotifyAPI:
 
 	def createUrl(self, url):
 		urlComponents = {
-			'https://open.spotify.com/user': 'https://api.spotify.com/v1/users',
-			'playlist': 'playlists'
+			'https://open.spotify.com/user/': 'https://api.spotify.com/v1/users/',
+			'/playlist/': '/playlists/'
 		}
 		for component in urlComponents:
 			url = url.replace(component, urlComponents[component])
