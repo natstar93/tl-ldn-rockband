@@ -45,13 +45,10 @@ class SpotifyAPI(API):
 		return response.json()['access_token']
 
 	def createUrl(self, url):
-		urlComponents = {
-			'https://open.spotify.com/user/': 'https://api.spotify.com/v1/users/',
-			'/playlist/': '/playlists/'
-		}
-		for component in urlComponents:
-			url = url.replace(component, urlComponents[component])
-		return url
+		regex = re.compile('(?:(\S+users?\W))(\w+)(\Wplaylists?\W)(\w+)')
+		matchObj = re.match(regex, url)
+
+		return 'https://api.spotify.com/v1/users/{0}/playlists/{1}'.format(matchObj.group(2), matchObj.group(4))
 
 	def getData(self, url, headers={}):
 		return super().getData(url, headers)
@@ -94,6 +91,7 @@ class RockBandAPI(API):
 		except Exception:
 			print('\nFailed to get Rock Band tracks')
 			return []
+
 
 class Matcher:
 
