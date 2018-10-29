@@ -45,10 +45,14 @@ class SpotifyAPI(API):
 		return response.json()['access_token']
 
 	def createUrl(self, url):
-		regex = re.compile('(?:(\S+users?\W))(\w+)(\Wplaylists?\W)(\w+)')
-		matchObj = re.match(regex, url)
+		try:
+			regex = re.compile('(?:(\S+users?\W))(\w+)(\Wplaylists?\W)(\w+)')
+			matchObj = re.match(regex, url)
 
-		return 'https://api.spotify.com/v1/users/{0}/playlists/{1}'.format(matchObj.group(2), matchObj.group(4))
+			return 'https://api.spotify.com/v1/users/{0}/playlists/{1}'.format(matchObj.group(2), matchObj.group(4))
+		except Exception:
+			print('\nIncorrect URL provided')
+			return null;
 
 	def getData(self, url, headers={}):
 		return super().getData(url, headers)
@@ -119,7 +123,11 @@ def main():
 
 	spotifyUrl = (sys.argv[1]) if len(sys.argv) > 1 else tlPlaylistUrl
 
-	spotify = SpotifyAPI(client_id, client_secret, spotifyUrl)
+	try:
+		spotify = SpotifyAPI(client_id, client_secret, spotifyUrl)
+	except Exception:
+		print('\nFailed to call Spotify API')
+		return
 
 	spotifyPlaylistName = spotify.getPlaylistName()
 
