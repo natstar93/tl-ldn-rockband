@@ -152,5 +152,6 @@ def main():
 if __name__ == '__main__':
 	try:
 		main()
-	except Exception:
-		print('\nUnknown error occurred')
+	except Exception as e:
+		print('\nSorry, an error occurred')
+		print("type error: " + str(e))
