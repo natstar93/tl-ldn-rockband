@@ -16,7 +16,7 @@ Make sure you have python3 installed. Open up your terminal/windows command thin
 
 ```
 python3 setup.py install
-python3 spotifymatches.py
+python3 spotify-matches.py
 ```
 
 This will list the tracks on the TL-LDN-ROX playlist that are available on Rock Band.
