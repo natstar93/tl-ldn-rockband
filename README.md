@@ -16,7 +16,7 @@ Make sure you have python3 installed. Open up your terminal/windows command thin
 
 ```
 python3 setup.py install
-python3 spotifymatches.py
+python3 spotify-matches.py
 ```
 
 This will list the tracks on the TL-LDN-ROX playlist that are available on Rock Band.
@@ -32,8 +32,6 @@ This will list the tracks on your playlist that are available on Rock Band.
 To find a Spotify playlist URL:
 * Right-click your playlist's name in the Spotify menu bar (or click on the three little dots on the playlist's home screen)
 * Hover over `Share` in the context menu and click `Copy Playlist URI`.
-
-Try not to type the URL incorrectly or input a private playlist because the error handling and user input validation are currently pretty crap (sorry, will fix all that soon).
 
 Please Slack me with any bugs or general complaints. This is my first Python project so be nice :)
 
