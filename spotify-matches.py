@@ -51,7 +51,7 @@ class SpotifyAPI(API):
 
 			return 'https://api.spotify.com/v1/users/{0}/playlists/{1}'.format(matchObj.group(2), matchObj.group(4))
 		except Exception:
-			print('\nIncorrect URL provided')
+			print('\nIncorrect Spotify URL provided')
 			return null;
 
 	def getData(self, url, headers={}):
